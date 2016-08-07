@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.IO;
 using CsvHelper;
 
@@ -13,6 +10,11 @@ namespace CsvAggregator
     {
       string InFolderPath = "./input";
       string OutPath = "./output.csv";
+
+      Console.WriteLine("test");
+      Console.ReadLine();
+      Console.WriteLine("exit");
+      Environment.Exit(0);
 
       try
       {
@@ -41,10 +43,8 @@ namespace CsvAggregator
                       csvOut.WriteRecord(new PricePoint() {Id = id, Price = price, PriceDate = fileDatePlus2});
                     }
                   }
-
                 }
               }
-
             }
             catch
             {
