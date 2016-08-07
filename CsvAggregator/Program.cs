@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using CsvHelper;
+using System.Text.RegularExpressions;
 
 namespace CsvAggregator
 {
@@ -8,11 +9,19 @@ namespace CsvAggregator
   {
     public static void Main(string[] args)
     {
-      string InFolderPath = "./input";
-      string OutPath = "./output.csv";
+      string InFolderPath = @"C:\Users\wildbillcat\Downloads\PricingStrategy\DataDump\PricingBackupCsvs";
+      string OutPath = @"C:\Users\wildbillcat\Downloads\PricingStrategy\DataDump\output.csv";
+      Regex rgx = new Regex(@"pricing-backup-(\S+)\.");
 
       Console.WriteLine("test");
-      Console.ReadLine();
+      foreach (string CsvFile in Directory.EnumerateFiles(InFolderPath))
+      {
+        string dateText = rgx.Matches(CsvFile)[0].Groups[1].Value;
+        DateTime Parsed = DateTime.Parse(dateText);
+        Console.WriteLine(dateText);
+        Console.WriteLine(Parsed);
+      }
+      //Console.ReadLine();
       Console.WriteLine("exit");
       Environment.Exit(0);
 
