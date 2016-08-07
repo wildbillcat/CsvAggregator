@@ -12,30 +12,20 @@ namespace CsvAggregator
       string InFolderPath = @"C:\Users\wildbillcat\Downloads\PricingStrategy\DataDump\PricingBackupCsvs";
       string OutPath = @"C:\Users\wildbillcat\Downloads\PricingStrategy\DataDump\output.csv";
       Regex rgx = new Regex(@"pricing-backup-(\S+)\.");
-
-      Console.WriteLine("test");
-      foreach (string CsvFile in Directory.EnumerateFiles(InFolderPath))
-      {
-        string dateText = rgx.Matches(CsvFile)[0].Groups[1].Value;
-        DateTime Parsed = DateTime.Parse(dateText);
-        Console.WriteLine(dateText);
-        Console.WriteLine(Parsed);
-      }
-      //Console.ReadLine();
-      Console.WriteLine("exit");
-      Environment.Exit(0);
-
+      Console.WriteLine("Start");
       try
       {
         using (CsvWriter csvOut = new CsvWriter(System.IO.File.CreateText(OutPath)))
         {
-          foreach (string CsvFile in Directory.EnumerateFiles(InFolderPath))
+          foreach (string csvFile in Directory.EnumerateFiles(InFolderPath))
           {
             try
             {
-              using (CsvReader csv = new CsvReader(System.IO.File.OpenText(CsvFile)))
+              using (CsvReader csv = new CsvReader(File.OpenText(csvFile)))
               {
-                DateTime fileDate = new DateTime();
+                string dateText = rgx.Matches(csvFile)[0].Groups[1].Value;
+                Console.WriteLine(dateText);
+                DateTime fileDate = DateTime.Parse(dateText);
                 bool friday = fileDate.DayOfWeek.Equals(DayOfWeek.Friday);
                 DateTime fileDatePlus1 = fileDate.AddDays(1);
                 DateTime fileDatePlus2 = fileDate.AddDays(2);
@@ -43,7 +33,7 @@ namespace CsvAggregator
                 {
                   long id = 0;
                   double price = 0;
-                  if (csv.TryGetField<long>(0, out id) && csv.TryGetField<double>(2, out price))
+                  if (csv.TryGetField("coresense_id", out id) && csv.TryGetField("price", out price))
                   {
                     csvOut.WriteRecord(new PricePoint() {Id = id, Price = price, PriceDate = fileDate});
                     if (friday)
@@ -57,7 +47,7 @@ namespace CsvAggregator
             }
             catch
             {
-              Console.WriteLine("Failed to open read stream on %s", CsvFile);
+              Console.WriteLine("Failed to open read stream on %s", csvFile);
             }
           }
         }
